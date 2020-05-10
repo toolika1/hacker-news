@@ -26,7 +26,7 @@ class Home extends React.Component {
     this.fetchData(get(nextProps, 'history.location.state.page', 0))
   }
   fetchData = (pageNumber) => {
-    axios.get(`http://hn.algolia.com/api/v1/search?tags=front_page&page=${pageNumber}`).
+    axios.get(`https://hn.algolia.com/api/v1/search?tags=front_page&page=${pageNumber}`).
     then((result)=> {
     this.setState({data: result.data, currentPage:pageNumber }
 
