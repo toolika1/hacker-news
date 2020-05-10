@@ -30,7 +30,7 @@ export default class Graph extends React.Component {
   <YAxis />
   <Tooltip />
   <Legend align="left"/>
-  <Line type="monotone" dataKey="points" stroke="#8884d8" />
+  <Line type="monotone" dataKey="points" stroke="orange" />
 </LineChart>
              </div>
     )

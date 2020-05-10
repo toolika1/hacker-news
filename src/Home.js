@@ -1,6 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-import { Table, Space, Button } from 'antd';
+import { Table, Space, Button, Divider } from 'antd';
 import { get, filter } from 'lodash';
 import moment from 'moment';
 import { setItemInStore, getItemFromStore} from './service'
@@ -48,7 +48,7 @@ class Home extends React.Component {
    this.fetchData(currentPage)
   }
   handleNext = ()=> {
-    const currentPage = this.state.currentPage
+    const currentPage = parseInt(this.state.currentPage, 10)
     
     // this.fetchData(  )
     const {history} = this.props
@@ -70,7 +70,7 @@ class Home extends React.Component {
    
   }
   handlePrevious = ()=> {
-    const currentPage = this.state.currentPage
+    const currentPage = parseInt(this.state.currentPage, 10)
     const {history} = this.props
       history.push({
         pathname: '/hacker-news',
@@ -130,10 +130,10 @@ class Home extends React.Component {
           return(
           <Space size="small">
             <span>{record.title}</span>
-            <a style={{color : 'grey'}} href={record.url} target="blank">{record.url}</a> 
-            by <span>{record.author}</span>
+            <a style={{color : 'grey'}} href={record.url} target="blank">{`(${record.url})`}</a>
+            by <span style={{color: 'black'}}>{record.author}</span>
             <span>{moment(record.created_at).fromNow()}</span>
-            [<a style={{color : 'black'}} onClick={ (e) => this.hideNewsPost(e, record.objectID)}>Hide</a>]
+            <a style={{color : 'black'}} onClick={ (e) => this.hideNewsPost(e, record.objectID)}>[Hide]</a>
           </Space>)
       },
       },
@@ -142,6 +142,7 @@ class Home extends React.Component {
     return (
             <div className="app"  style={{paddingLeft: '80px', paddingRight: '80px'}}>
         <Table
+          className="table-striped-rows"
           columns={columns}
           dataSource={hackerNewPost}
           pagination={{
@@ -152,11 +153,15 @@ class Home extends React.Component {
           size="small"
           rowKey={record => record.objectID}
            />
-           <Space size="small">
-           <Button type="link" disabled = {this.state.currentPage == 0 ? true : false} onClick={this.handlePrevious}>Previous</Button> 
-           <Button type="link" disabled = {this.state.currentPage >= (nbPages - 1) ? true: false} onClick={this.handleNext}>Next</Button> 
+           <div style={{textAlign:"right"}}>
+           <Space size="small" >
+           <Button type="link" style={{color: 'orange'}} disabled = {this.state.currentPage == 0 ? true : false} onClick={this.handlePrevious}>Previous</Button> 
+           <Divider type="vertical" style={{color: 'orange'}} />
+           <Button type="link" style={{color: 'orange'}} disabled = {this.state.currentPage >= (nbPages - 1) ? true: false} onClick={this.handleNext}>Next</Button> 
            </Space>
+           </div>
            <div style={{marginBottom: '100px'}}>
+             <h1>Votes Per News Post(votes and objectID)</h1>
            <LineChart data={hackerNewPost}/>
            </div>
              </div>
