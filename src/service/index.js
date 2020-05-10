@@ -1,12 +1,18 @@
 
   // actions
-  const setItemInStore = (PageNumber, storageObj) => (
-    localStorage.setItem(PageNumber ,storageObj)
-  );
+  const setItemInStore = (PageNumber, storageObj) => {
+    if (typeof localStorage !== 'undefined'){
+        localStorage.setItem(PageNumber ,storageObj)
+    }
+   
+  };
   
-  const getItemFromStore = key => (
-    localStorage.getItem(key)
-  );
+  const getItemFromStore = key => {
+    if (typeof localStorage !== 'undefined'){
+       return localStorage.getItem(key)
+    }
+    
+  };
   
   export  {
     setItemInStore,

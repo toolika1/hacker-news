@@ -1,21 +1,24 @@
 // types of action
 const Types = {
-    CREATE_ITEM: "CREATE_ITEM",
+    CURRENT_PAGE: "CURRENT_PAGE",
     DELETE_ITEM: "DELETE_ITEM"
   };
   // actions
-  const createItem = task => ({
-    type: Types.CREATE_ITEM,
+  const updatePage = (task) => {
+    console.log('action called', task)
+    return{
+    type: Types.CURRENT_PAGE,
     payload: task
-  });
+    }
+  };
   
   const deleteItem = id => ({
     type: Types.DELETE_ITEM,
     payload: id
   });
   
-  export default {
-    createItem,
+  export  {
+    updatePage,
     deleteItem,
     Types
   };

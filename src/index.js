@@ -1,6 +1,8 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from 'react-redux';
+import createStore from './modules/store';
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,10 +17,15 @@ import 'antd/dist/antd.css';
 import './Home.css'
 export const history = createBrowserHistory();
 ReactDOM.hydrate(
+  
   <Router  history={history}>
+   <Provider store={ createStore() }>
   <Route path = "/hacker-news" component = {Home}>
+
   </Route>
+  </Provider>
 </Router>
+
 ,
   document.getElementById('root')
 );

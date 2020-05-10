@@ -6,31 +6,28 @@ import moment from 'moment';
 import { setItemInStore, getItemFromStore} from './service'
 // import { useHistory } from "react-router-dom";
 import { CaretUpOutlined } from '@ant-design/icons';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import querystring from 'querystring'
+import { updatePage }  from './modules/action';
+import LineChart from './LineChart'
 import './Home.css'
-export default class Home extends React.Component {
+class Home extends React.Component {
   constructor (props) {
     super(props)
     this.state= {
       data: [],
-      currentPage: 0,
-      hackerNewPost: getItemFromStore("0") == null ? get(this.state, 'hackerNewPost', []) : JSON.parse(getItemFromStore("0"))
+      currentPage: this.props.pageNumber,
+      hackerNewPost: getItemFromStore(this.props.pageNumber) == null ? get(this.state, 'hackerNewPost', []) : JSON.parse(getItemFromStore(this.props.pageNumber))
       
     }
   }
   componentWillReceiveProps(nextProps){
-  
+    this.fetchData(get(nextProps, 'history.location.state.page', 0))
   }
   fetchData = (pageNumber) => {
-
     axios.get(`http://hn.algolia.com/api/v1/search?tags=front_page&page=${pageNumber}`).
     then((result)=> {
-      const {history} = this.props
-      history.push({
-        pathname: '/hacker-news',
-        search: `?page=${pageNumber}`,
-        state: { data: result.data, page: pageNumber  }
-      })
-
     this.setState({data: result.data, currentPage:pageNumber }
 
     )
@@ -45,12 +42,22 @@ export default class Home extends React.Component {
   })
   }
   componentDidMount(){
-    this.fetchData(this.state.currentPage)
+    
+   
+   const currentPage = querystring.parse(this.props.location.search)['?page']
+   this.fetchData(currentPage)
   }
   handleNext = ()=> {
     const currentPage = this.state.currentPage
     
-    this.fetchData( currentPage + 1 )
+    // this.fetchData(  )
+    const {history} = this.props
+      history.push({
+        pathname: '/hacker-news',
+        search: `?page=${currentPage + 1}`,
+        state: { data: [], page: currentPage + 1  }
+      })
+    this.props.dispatch(updatePage(currentPage + 1))
   }
   hideNewsPost = (e, hidePost) => {
 
@@ -64,7 +71,14 @@ export default class Home extends React.Component {
   }
   handlePrevious = ()=> {
     const currentPage = this.state.currentPage
-    this.fetchData(currentPage - 1 )
+    const {history} = this.props
+      history.push({
+        pathname: '/hacker-news',
+        search: `?page=${currentPage - 1}`,
+        state: { data: [], page: currentPage - 1  }
+      })
+    // this.fetchData(currentPage - 1 )
+    this.props.dispatch(updatePage(currentPage - 1))
   }
   handleVoteUpwards = (e, objectID) => {
    const newDataForUpVote =  get(this.state, 'hackerNewPost').map((row)=> {
@@ -79,11 +93,12 @@ export default class Home extends React.Component {
     setItemInStore(this.state.currentPage, JSON.stringify(newDataForUpVote) )
     this.setState({hackerNewPost: newDataForUpVote})
   }
+  
   render () {
-    console.log(getItemFromStore(this.state.currentPage))
+    const { pageNumber } = this.props;
     const hackerNewPost =  get(this.state, 'hackerNewPost', []) 
     const nbPages = get(this.state, 'data.nbPages', [])
-    console.log(this.state.currentPage > (nbPages - 1) ? true: false)
+    console.log('<----------this.props------------->', pageNumber)
     const columns = [
       {
         title: 'Comments',
@@ -117,7 +132,7 @@ export default class Home extends React.Component {
             <span>{record.title}</span>
             <a style={{color : 'grey'}} href={record.url} target="blank">{record.url}</a> 
             by <span>{record.author}</span>
-            <span>{days}</span>
+            <span>{moment(record.created_at).fromNow()}</span>
             [<a style={{color : 'black'}} onClick={ (e) => this.hideNewsPost(e, record.objectID)}>Hide</a>]
           </Space>)
       },
@@ -141,10 +156,20 @@ export default class Home extends React.Component {
            <Button type="link" disabled = {this.state.currentPage == 0 ? true : false} onClick={this.handlePrevious}>Previous</Button> 
            <Button type="link" disabled = {this.state.currentPage >= (nbPages - 1) ? true: false} onClick={this.handleNext}>Next</Button> 
            </Space>
-           
+           <div style={{marginBottom: '100px'}}>
+           <LineChart data={hackerNewPost}/>
+           </div>
              </div>
     )
   }
 }
 
+const mapStateToProps = (state) => {
+  return ({
+    pageNumber: state.pageNumber,
+  });
+}
 
+export default connect(mapStateToProps, (dispatch) => ({
+  ...bindActionCreators({updatePage}, dispatch), dispatch
+}))(Home);

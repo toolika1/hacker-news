@@ -4,16 +4,28 @@ import fs from 'fs';
 import React from 'react';
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
+import { Provider } from 'react-redux';
+import createStore from '../src/modules/store';
+import Home from '../src/Home';
+import 'localstorage-polyfill'
 
-import App from '../src/App';
-
+global['localStorage'] = localStorage;
 const PORT = process.env.PORT || 3006;
 const app = express();
 
 app.use(express.static('./build'));
 
 app.get('/*', (req, res) => {
-  const app = ReactDOMServer.renderToString(<App />);
+  const html = ReactDOMServer.renderToString(
+  <Provider store={ createStore() }>
+      <Home />
+    </Provider>
+  )
+  const store = createStore()
+  const preloadedState = store.getState()
+
+  // Send the rendered page back to the client
+  // res.send(renderFullPage(html, preloadedState))
 
   const indexFile = path.resolve('./build/index.html');
   fs.readFile(indexFile, 'utf8', (err, data) => {
@@ -23,7 +35,23 @@ app.get('/*', (req, res) => {
     }
 
     return res.send(
-      data.replace('<div id="root"></div>', `<div id="root">${app}</div>`)
+      data.replace(`<!doctype html>
+        <html>
+          <head>
+            <title>Redux Universal Example</title>
+          </head>
+          <body>
+            <div id="root">${html}</div>
+            <script>
+              // WARNING: See the following for security issues around embedding JSON in HTML:
+              // https://redux.js.org/recipes/server-rendering/#security-considerations
+              window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+                /</g,
+                '\\u003c'
+              )}
+            </script>
+            <script src="/static/bundle.js"></script>
+          </body>`)
     );
   });
 });

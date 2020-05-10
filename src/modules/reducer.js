@@ -1,23 +1,21 @@
-import ACTIONS from "./action";
+import { Types } from "./action";
 import _ from "lodash";
 
 const defaultState = {
-  items: []
+  pageNumber: 0
 };
 
 const todoReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case ACTIONS.Types.CREATE_ITEM: {
+    case Types.CURRENT_PAGE: {
       console.log(action);
 
       let item = action.payload;
-      let newItem = {  pageNumber: item };
-      let newState = _.cloneDeep(state);
-      newState.items.push(newItem);
-      return newState;
+     
+      return {...defaultState, pageNumber: item};
     }
 
-    case ACTIONS.Types.DELETE_ITEM: {
+    case Types.DELETE_ITEM: {
       let newState = _.cloneDeep(state);
       let index = _.findIndex(newState.items, { id: action.payload });
       newState.items.splice(index, 1);
