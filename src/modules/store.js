@@ -1,8 +1,16 @@
 import { createStore, applyMiddleware } from "redux";
 import logger from "redux-logger";
+import createSagaMiddleware from "redux-saga";
 
-import { defaultState, reducer } from "./reducer";
+import "regenerator-runtime/runtime";
 
-export default function configureStore(initialState = defaultState) {
-  return createStore(reducer, initialState, applyMiddleware(logger));
+import { reducer } from "./reducer";
+import sagas from "./sagas";
+
+const sagaMiddleware = createSagaMiddleware();
+
+export default function configureStore() {
+  const store = createStore(reducer, applyMiddleware(sagaMiddleware, logger));
+  sagaMiddleware.run(sagas);
+  return store;
 }

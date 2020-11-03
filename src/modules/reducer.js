@@ -1,16 +1,21 @@
-import { cloneDeep } from "lodash";
+import immutable from "seamless-immutable";
 
-import { types } from "./action";
+import { types } from "./actions";
 
-export const defaultState = {};
+const defaultState = { popup: false };
 
-export const reducer = (state = defaultState, action) => {
+export const initialState = immutable.from(defaultState);
+
+export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.DELETE_ITEM: {
-      const newState = cloneDeep(state);
-      // action.payload.id
-      return newState;
-    }
+    case types.POPUP:
+      return { ...state, popup: action.popup };
+
+    case "GET_NEWS":
+      return { ...state, loading: true };
+
+    case "NEWS_RECEIVED":
+      return { ...state, loading: false, news: action.json };
 
     default:
       return state;
