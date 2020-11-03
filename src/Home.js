@@ -25,15 +25,15 @@ const { Content, Header, Sider } = Layout;
 class Home extends React.Component {
   state = {
     collapsed: true,
-    windowInnerHeight: window.innerHeight || 480,
+    windowInnerHeight: window.innerHeight || 512,
     windowInnerWidth: window.innerWidth || 1024,
   };
 
   resizeWindow = () => {
     this.setState({
       collapsed: true,
-      windowInnerHeight: window.innerHeight,
-      windowInnerWidth: window.innerWidth,
+      windowInnerHeight: window.innerHeight || 512,
+      windowInnerWidth: window.innerWidth || 1024,
     });
   };
 

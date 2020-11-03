@@ -1,3 +1,4 @@
+// import bodyParser from "body-parser";
 import express from "express";
 import fs from "fs";
 import React from "react";
@@ -11,6 +12,7 @@ import Home from "../src/Home";
 import createStore from "../src/modules/store";
 
 global["localStorage"] = localStorage;
+global["window"] = require("global/window");
 
 const app = express();
 
@@ -23,8 +25,12 @@ app.get("/*", (req, res) => {
     </Provider>
   );
 
+  console.log("html", html);
+
   const store = createStore();
   const preLoadedState = store.getState();
+
+  console.log("preLoadedState", preLoadedState);
 
   fs.readFile(path.resolve("./build/index.html"), "utf8", (error, data) => {
     if (error) {
