@@ -1,7 +1,7 @@
-import React from 'react';
-import Home from './Home';
+import React from "react";
+
+import "./App.css";
 
 export default () => {
-  console.log(this.props)
-  return <Home name="Alligator" />;
+  return <div>App</div>;
 };

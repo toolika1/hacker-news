@@ -1,9 +1,0 @@
-.table-striped-rows tr:nth-child(2n) td {
-    background-color: #fbfbfb;
-}
-.table-striped-rows thead {
-    background-color: orange
-}
-thead[class*="ant-table-thead"] th{
-    background-color: orange !important;
-  }

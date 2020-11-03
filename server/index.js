@@ -1,61 +1,58 @@
-import path from 'path';
-import fs from 'fs';
+import express from "express";
+import fs from "fs";
+import React from "react";
+import ReactDOMServer from "react-dom/server";
+import { Provider } from "react-redux";
+import path from "path";
 
-import React from 'react';
-import express from 'express';
-import ReactDOMServer from 'react-dom/server';
-import { Provider } from 'react-redux';
-import createStore from '../src/modules/store';
-import Home from '../src/Home';
-import 'localstorage-polyfill'
+import "localstorage-polyfill";
 
-global['localStorage'] = localStorage;
-const PORT = process.env.PORT || 3006;
+import Home from "../src/Home";
+import createStore from "../src/modules/store";
+
+global["localStorage"] = localStorage;
+
 const app = express();
 
-app.use(express.static('./build'));
+app.use(express.static("./build"));
 
-app.get('/*', (req, res) => {
+app.get("/*", (req, res) => {
   const html = ReactDOMServer.renderToString(
-  <Provider store={ createStore() }>
+    <Provider store={createStore()}>
       <Home />
     </Provider>
-  )
-  const store = createStore()
-  const preloadedState = store.getState()
+  );
 
-  // Send the rendered page back to the client
-  // res.send(renderFullPage(html, preloadedState))
+  const store = createStore();
+  const preLoadedState = store.getState();
 
-  const indexFile = path.resolve('./build/index.html');
-  fs.readFile(indexFile, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Something went wrong:', err);
-      return res.status(500).send('Oops, better luck next time!');
+  fs.readFile(path.resolve("./build/index.html"), "utf8", (error, data) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
     }
 
     return res.send(
-      data.replace(`<!doctype html>
-        <html>
+      data.replace(`
+        <!doctype html>
+        <html lang="en">
           <head>
-            <title>Redux Universal Example</title>
+            <title>HackerNews</title>
           </head>
           <body>
             <div id="root">${html}</div>
             <script>
-              // WARNING: See the following for security issues around embedding JSON in HTML:
-              // https://redux.js.org/recipes/server-rendering/#security-considerations
-              window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
-                /</g,
-                '\\u003c'
-              )}
+              window.__PRELOADED_STATE__ = ${JSON.stringify(
+                preLoadedState
+              ).replace(/</g, "\\u003c")}
             </script>
             <script src="/static/bundle.js"></script>
-          </body>`)
+          </body>
+        </html>`)
     );
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`😎 Server is listening on port ${PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`localhost:${process.env.PORT || 3000}`);
 });

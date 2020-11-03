@@ -1,47 +1,30 @@
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const path = require("path");
+const externals = require("webpack-node-externals");
+
 module.exports = {
-  entry: './server/index.js',
-
-  target: 'node',
-
-  externals: [nodeExternals()],
-
-  output: {
-    path: path.resolve('server-build'),
-    filename: 'index.js'
-  },
-
+  entry: "./server/index.js",
+  externals: [externals()],
+  output: { filename: "index.js", path: path.resolve("server-build") },
   module: {
     rules: [
+      { test: /\.css$/, use: "css-loader" },
+      { test: /\.js$/, use: "babel-loader" },
       {
-        test: /\.js$/,
-        use: 'babel-loader'
+        test: /\.less$/,
+        use: [
+          { loader: "style-loader" },
+          {
+            loader: "css-loader",
+            options: {
+              localIdentName: "[local]___[hash:base64:5]",
+              modules: true,
+              sourceMap: true,
+            },
+          },
+          { loader: "less-loader" },
+        ],
       },
-    {
-      test: /\.less$/,
-      use: [
-        {
-          loader: "style-loader"
-        },
-       
-        {
-          loader: "css-loader",
-          options: {
-            sourceMap: true,
-            modules: true,
-            localIdentName: "[local]___[hash:base64:5]"
-          }
-        },
-        {
-          loader: "less-loader"
-        }
-      ]
-    },
-    {
-      test: /\.css$/,
-      use: 'css-loader'
-    }
-    ]
-  }
+    ],
+  },
+  target: "node",
 };
