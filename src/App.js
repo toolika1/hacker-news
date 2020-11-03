@@ -3,5 +3,5 @@ import React from "react";
 import "./App.css";
 
 export default () => {
-  return <div>App</div>;
+  return <div>hackerNews</div>;
 };

@@ -1,0 +1,72 @@
+.layout {
+  height: 100vh;
+}
+
+.sider {
+  height: 100vh;
+  padding: 8px 0;
+}
+
+.sider > div {
+  padding: 8px 0;
+}
+
+.logo .ant-list-item-meta-avatar {
+  margin-left: 16px;
+}
+
+.logo .ant-list-item-meta-content {
+  margin-right: 4px;
+}
+
+.logo .ant-list-item-meta-title {
+  font-size: 16px;
+}
+
+.sider .category {
+  overflow-y: scroll;
+  padding: 8px 0;
+}
+
+.sider .category .center-justified {
+  height: 50%;
+}
+
+.ant-menu-inline-collapsed {
+  width: 64px;
+}
+
+.menu * {
+  cursor: pointer;
+}
+
+.site-layout-header {
+  background-color: #ffffff;
+  height: 64px;
+  padding: 0;
+}
+
+.site-layout-header-trigger {
+  font-size: 18px;
+  padding: 0 24px;
+  transition: color 0.3s;
+}
+
+.site-layout-header-trigger * {
+  cursor: pointer;
+}
+
+.site-layout-header-title {
+  font-size: 16px;
+}
+
+.site-layout-header-input {
+  margin: 0 24px;
+  width: 192px;
+}
+
+.site-layout-header-button {
+  border: none;
+  font-size: 18px;
+  margin: 0 24px;
+}

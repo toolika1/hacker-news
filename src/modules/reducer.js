@@ -2,7 +2,7 @@ import immutable from "seamless-immutable";
 
 import { types } from "./actions";
 
-const defaultState = { popup: false };
+const defaultState = { news: [], popup: false };
 
 export const initialState = immutable.from(defaultState);
 

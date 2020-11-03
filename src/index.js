@@ -9,6 +9,8 @@ import createStore from "./modules/store";
 import "antd/dist/antd.css";
 import "antd/dist/antd.less";
 
+import "./index.css";
+
 // import App from "./App";
 import Home from "./Home";
 
