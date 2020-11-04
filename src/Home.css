@@ -49,7 +49,6 @@
 .site-layout-header-trigger {
   font-size: 18px;
   padding: 0 24px;
-  transition: color 0.3s;
 }
 
 .site-layout-header-trigger * {
@@ -58,6 +57,7 @@
 
 .site-layout-header-title {
   font-size: 16px;
+  text-transform: capitalize;
 }
 
 .site-layout-header-input {
@@ -69,4 +69,14 @@
   border: none;
   font-size: 18px;
   margin: 0 24px;
+}
+
+.site-layout-content {
+  background-color: #fafafa;
+}
+
+.my-masonry-grid {
+  display: flex;
+  margin: 8px;
+  width: auto;
 }

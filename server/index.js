@@ -38,9 +38,7 @@ app.get("/*", (req, res) => {
       return res.status(500).send("Internal Server Error");
     }
 
-    return res.send(
-      data.replace(`
-        <!doctype html>
+    return res.send(`<!doctype html>
         <html lang="en">
           <head>
             <title>HackerNews</title>
@@ -54,8 +52,7 @@ app.get("/*", (req, res) => {
             </script>
             <script src="/static/bundle.js"></script>
           </body>
-        </html>`)
-    );
+        </html>`);
   });
 });
 

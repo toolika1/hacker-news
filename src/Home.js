@@ -1,5 +1,5 @@
 import {
-  BankOutlined,
+  BulbOutlined,
   CoffeeOutlined,
   FireOutlined,
   GlobalOutlined,
@@ -11,20 +11,47 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Input, Layout, List, Menu, Tooltip } from "antd";
+import { find } from "lodash";
+import Masonry from "react-masonry-css";
+import queryString from "query-string";
 import React from "react";
 import { connect } from "react-redux";
-// import { useHistory } from "react-router-dom";
+// import { withRouter } from "react-router-dom";
 import { bindActionCreators } from "redux";
 
 import "./Home.css";
 
 import { getNews, popupAction } from "./modules/actions";
+import NewsItem from "./NewsItem";
 
 const { Content, Header, Sider } = Layout;
 
 class Home extends React.Component {
   state = {
     collapsed: true,
+    menuCategories: [
+      {
+        icon: React.createElement(FireOutlined),
+        key: "*",
+        title: "Trending Now",
+      },
+      {
+        icon: React.createElement(TrophyOutlined),
+        key: "sports",
+        title: "Sports",
+      },
+      {
+        icon: React.createElement(BulbOutlined),
+        key: "technology",
+        title: "Technology",
+      },
+      {
+        icon: React.createElement(CoffeeOutlined),
+        key: "politics",
+        title: "Politics",
+      },
+    ],
+    q: "*",
     windowInnerHeight: window.innerHeight || 512,
     windowInnerWidth: window.innerWidth || 1024,
   };
@@ -40,15 +67,45 @@ class Home extends React.Component {
   componentDidMount() {
     window.addEventListener("resize", this.resizeWindow);
 
-    this.props.getNews();
-    this.props.popupAction(true);
+    const queryParams = queryString.parse(this.props.location.search);
+
+    if (queryParams.q === undefined) {
+      this.props.history.push({
+        search: `?${queryString.stringify({ ...queryParams, q: "*" })}`,
+      });
+    } else {
+      this.setState({ q: queryParams.q });
+      this.props.getNews(this.state.q);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const queryParams = queryString.parse(this.props.location.search);
+    const nextQueryParams = queryString.parse(nextProps.location.search);
+
+    // console.log("queryParams", queryParams, "nextQueryParams", nextQueryParams);
+
+    if (queryParams.q !== nextQueryParams.q) {
+      this.setState({ q: nextQueryParams.q });
+      this.props.getNews(this.state.q);
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeWindow);
   }
 
-  toggle = () => {
+  onSelectMenuCategory = (selection) => {
+    this.setState({ collapsed: true });
+
+    const queryParams = queryString.parse(this.props.location.search);
+
+    this.props.history.push({
+      search: `?${queryString.stringify({ ...queryParams, q: selection.key })}`,
+    });
+  };
+
+  onMenuToggle = () => {
     this.setState({ collapsed: !this.state.collapsed });
   };
 
@@ -88,39 +145,17 @@ class Home extends React.Component {
               </div>
 
               <div className="category">
-                <Menu mode="inline">
-                  <Menu.Item
-                    className="menu"
-                    icon={<FireOutlined />}
-                    key="top-headlines"
-                    title="Popular"
-                  >
-                    Popular
-                  </Menu.Item>
-                  <Menu.Item
-                    className="menu"
-                    icon={<CoffeeOutlined />}
-                    key="politics"
-                    title="Politics"
-                  >
-                    Politics
-                  </Menu.Item>
-                  <Menu.Item
-                    className="menu"
-                    icon={<TrophyOutlined />}
-                    key="sports"
-                    title="Sports"
-                  >
-                    Sports
-                  </Menu.Item>
-                  <Menu.Item
-                    className="menu"
-                    icon={<BankOutlined />}
-                    key="business"
-                    title="Business"
-                  >
-                    Business
-                  </Menu.Item>
+                <Menu mode="inline" onSelect={this.onSelectMenuCategory}>
+                  {this.state.menuCategories.map((category) => (
+                    <Menu.Item
+                      className="menu"
+                      icon={category.icon}
+                      key={category.key}
+                      title={category.title}
+                    >
+                      {category.title}
+                    </Menu.Item>
+                  ))}
                 </Menu>
               </div>
             </div>
@@ -160,33 +195,58 @@ class Home extends React.Component {
               this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
               {
                 className: "site-layout-header-trigger",
-                onClick: this.toggle,
+                onClick: this.onMenuToggle,
               }
             )}
 
-            <div className="flex site-layout-header-title">Popular</div>
+            <div className="flex site-layout-header-title">
+              {this.state.collapsed && this.state.windowInnerWidth < 512
+                ? (
+                    find(this.state.menuCategories, { key: this.state.q }) ||
+                    this.state.menuCategories[0]
+                  ).title
+                : ""}
+            </div>
 
-            {768 < this.state.windowInnerWidth ? (
-              <Input
-                bordered={false}
-                className="site-layout-header-input"
-                placeholder="Search"
-                size="large"
-                suffix={<SearchOutlined />}
-              />
-            ) : (
-              <Tooltip title="Search">
-                <Button
-                  className="site-layout-header-button"
-                  icon={<SearchOutlined />}
-                  shape="circle"
+            {this.state.collapsed ||
+            (!this.state.collapsed && 512 < this.state.windowInnerWidth) ? (
+              768 < this.state.windowInnerWidth ? (
+                <Input
+                  bordered={false}
+                  className="site-layout-header-input"
+                  placeholder="Search"
+                  size="large"
+                  suffix={<SearchOutlined />}
                 />
-              </Tooltip>
+              ) : (
+                <Tooltip title="Search">
+                  <Button
+                    className="site-layout-header-button"
+                    icon={<SearchOutlined />}
+                    shape="circle"
+                  />
+                </Tooltip>
+              )
+            ) : (
+              ""
             )}
           </Header>
 
-          <Content>
-            <div>#</div>
+          <Content className="site-layout-content">
+            {this.state.collapsed ||
+            (!this.state.collapsed && 512 < this.state.windowInnerWidth) ? (
+              <Masonry
+                breakpointCols={{ 480: 1, 736: 2, 992: 3, default: 4 }}
+                className="my-masonry-grid"
+                columnClassName="my-masonry-grid-column"
+              >
+                {this.props.news.map((newsItem, key) => (
+                  <NewsItem data={{ ...newsItem, key }} key={key} />
+                ))}
+              </Masonry>
+            ) : (
+              ""
+            )}
           </Content>
         </Layout>
       </Layout>
