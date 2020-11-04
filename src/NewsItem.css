@@ -2,9 +2,21 @@
   background-color: #ffffff;
   border-radius: 8px;
   margin: 16px 8px;
-  padding: 32px 16px;
+  padding: 16px;
 }
 
-.news-item {
-  /* font-size: 16px; */
+.news-item .ant-list-item-meta-title {
+  margin: 0;
+}
+
+.news-item img {
+  width: 100%;
+}
+
+.news-item .title {
+  margin: 8px 0;
+}
+
+.news-item .footer {
+  height: 48px;
 }

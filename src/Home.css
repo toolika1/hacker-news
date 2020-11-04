@@ -80,3 +80,8 @@
   margin: 8px;
   width: auto;
 }
+
+.site-layout-content-loader {
+  height: 48px;
+  margin: 8px;
+}

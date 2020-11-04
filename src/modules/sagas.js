@@ -4,11 +4,12 @@ import { all, put, takeLatest } from "redux-saga/effects";
 import { types } from "./actions";
 
 const API_KEY = "df1ec0d58213465cb8a82f5a683e151f";
+let page = 1;
 
 function* fetchNews(action) {
   // console.log("action", action);
   const json = yield fetch(
-    `http://newsapi.org/v2/everything?apiKey=${API_KEY}&q=${
+    `http://newsapi.org/v2/everything?apiKey=${API_KEY}&page=${page++}&q=${
       action.q || "*"
     }&sortBy=popularity`
   ).then((response) => response.json());

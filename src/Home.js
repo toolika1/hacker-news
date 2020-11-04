@@ -10,7 +10,7 @@ import {
   TrophyOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Input, Layout, List, Menu, Tooltip } from "antd";
+import { Avatar, Button, Input, Layout, List, Menu, Spin, Tooltip } from "antd";
 import { find } from "lodash";
 import Masonry from "react-masonry-css";
 import queryString from "query-string";
@@ -21,7 +21,7 @@ import { bindActionCreators } from "redux";
 
 import "./Home.css";
 
-import { getNews } from "./modules/actions";
+import { clearNews, getNews } from "./modules/actions";
 import NewsItem from "./NewsItem";
 
 const { Content, Header, Sider } = Layout;
@@ -96,6 +96,7 @@ class Home extends React.Component {
   }
 
   onSelectMenuCategory = (selection) => {
+    this.props.clearNews();
     this.setState({ collapsed: true });
 
     const queryParams = queryString.parse(this.props.location.search);
@@ -107,6 +108,10 @@ class Home extends React.Component {
 
   onMenuToggle = () => {
     this.setState({ collapsed: !this.state.collapsed });
+  };
+
+  onClickLoadMore = () => {
+    this.props.getNews(this.state.q);
   };
 
   render() {
@@ -200,7 +205,8 @@ class Home extends React.Component {
             )}
 
             <div className="flex site-layout-header-title">
-              {this.state.collapsed && this.state.windowInnerWidth < 512
+              {this.state.collapsed ||
+              (!this.state.collapsed && 512 < this.state.windowInnerWidth)
                 ? (
                     find(this.state.menuCategories, { key: this.state.q }) ||
                     this.state.menuCategories[0]
@@ -235,15 +241,25 @@ class Home extends React.Component {
           <Content className="site-layout-content">
             {this.state.collapsed ||
             (!this.state.collapsed && 512 < this.state.windowInnerWidth) ? (
-              <Masonry
-                breakpointCols={{ 480: 1, 736: 2, 992: 3, default: 4 }}
-                className="my-masonry-grid"
-                columnClassName="my-masonry-grid-column"
-              >
-                {this.props.news.map((newsItem, key) => (
-                  <NewsItem data={{ ...newsItem }} key={key} />
-                ))}
-              </Masonry>
+              <div>
+                <Masonry
+                  breakpointCols={{ 480: 1, 736: 2, 992: 3, default: 4 }}
+                  className="my-masonry-grid"
+                  columnClassName="my-masonry-grid-column"
+                >
+                  {this.props.news.map((newsItem, key) => (
+                    <NewsItem data={{ ...newsItem }} key={key} />
+                  ))}
+                </Masonry>
+
+                <div className="center-justified horizontal layout site-layout-content-loader">
+                  {this.props.loading ? (
+                    <Spin />
+                  ) : (
+                    <Button onClick={this.onClickLoadMore}>Load More</Button>
+                  )}
+                </div>
+              </div>
             ) : (
               ""
             )}
@@ -255,10 +271,10 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { news: state.news };
+  return { loading: state.loading, news: state.news };
 };
 
 export default connect(mapStateToProps, (dispatch) => ({
-  ...bindActionCreators({ getNews }, dispatch),
+  ...bindActionCreators({ clearNews, getNews }, dispatch),
   dispatch,
 }))(Home);
