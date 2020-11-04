@@ -11,17 +11,17 @@ import "antd/dist/antd.less";
 
 import "./index.css";
 
-// import App from "./App";
+import App from "./App";
 import Home from "./Home";
 
 export const history = createBrowserHistory();
 
 ReactDOM.hydrate(
-  <Router history={history}>
-    <Provider store={createStore()}>
-      {/* <Route path="/app" component={App}></Route> */}
-      <Route path="/" component={Home}></Route>
-    </Provider>
-  </Router>,
+  <Provider store={createStore(window.REDUX_DATA)}>
+    <Router history={history}>
+      <Route exact path="/app" component={App}></Route>
+      <Route exact path="/" component={Home}></Route>
+    </Router>
+  </Provider>,
   document.getElementById("root")
 );

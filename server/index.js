@@ -4,11 +4,13 @@ import fs from "fs";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { Provider } from "react-redux";
+import { StaticRouter } from "react-router-dom";
 import path from "path";
 
 import "localstorage-polyfill";
 
 import Home from "../src/Home";
+import { getNews } from "../src/modules/actions";
 import createStore from "../src/modules/store";
 
 global["localStorage"] = localStorage;
@@ -18,42 +20,33 @@ const app = express();
 
 app.use(express.static("./build"));
 
-app.get("/*", (req, res) => {
+app.get("/*", async (req, res) => {
+  const context = {};
+  const store = createStore();
+
+  await store.dispatch(getNews("*"));
+
   const html = ReactDOMServer.renderToString(
-    <Provider store={createStore()}>
-      <Home />
+    <Provider store={store}>
+      <StaticRouter context={context} location={req.path}>
+        <Home />
+      </StaticRouter>
     </Provider>
   );
-
   console.log("html", html);
 
-  const store = createStore();
-  const preLoadedState = store.getState();
+  const reduxState = store.getState();
+  console.log("reduxState", reduxState);
 
-  console.log("preLoadedState", preLoadedState);
-
-  fs.readFile(path.resolve("./build/index.html"), "utf8", (error, data) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).send("Internal Server Error");
-    }
-
-    return res.send(`<!doctype html>
-        <html lang="en">
-          <head>
-            <title>HackerNews</title>
-          </head>
-          <body>
-            <div id="root">${html}</div>
-            <script>
-              window.__PRELOADED_STATE__ = ${JSON.stringify(
-                preLoadedState
-              ).replace(/</g, "\\u003c")}
-            </script>
-            <script src="/static/bundle.js"></script>
-          </body>
-        </html>`);
-  });
+  const build = fs.readFileSync(path.resolve("./build/index.html"), "utf8");
+  return res.send(
+    build.replace(
+      '<div id="root"></div>',
+      `<div id="root">${html}</div><script>window.REDUX_DATA=${JSON.stringify(
+        reduxState
+      )}</script>`
+    )
+  );
 });
 
 app.listen(process.env.PORT || 3000, () => {

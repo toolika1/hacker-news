@@ -2,7 +2,7 @@ import immutable from "seamless-immutable";
 
 import { types } from "./actions";
 
-const defaultState = { news: [], popup: "" };
+const defaultState = { news: [] };
 
 export const initialState = immutable.from(defaultState);
 
@@ -13,9 +13,6 @@ export const reducer = (state = initialState, action) => {
 
     case types.NEWS_RECEIVED:
       return { ...state, loading: false, news: action.json };
-
-    case types.POPUP:
-      return { ...state, popup: action.popup };
 
     default:
       return state;

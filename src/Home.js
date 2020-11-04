@@ -21,7 +21,7 @@ import { bindActionCreators } from "redux";
 
 import "./Home.css";
 
-import { getNews, popupAction } from "./modules/actions";
+import { getNews } from "./modules/actions";
 import NewsItem from "./NewsItem";
 
 const { Content, Header, Sider } = Layout;
@@ -241,7 +241,7 @@ class Home extends React.Component {
                 columnClassName="my-masonry-grid-column"
               >
                 {this.props.news.map((newsItem, key) => (
-                  <NewsItem data={{ ...newsItem, key }} key={key} />
+                  <NewsItem data={{ ...newsItem }} key={key} />
                 ))}
               </Masonry>
             ) : (
@@ -255,10 +255,10 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { news: state.news, popup: state.popup };
+  return { news: state.news };
 };
 
 export default connect(mapStateToProps, (dispatch) => ({
-  ...bindActionCreators({ getNews, popupAction }, dispatch),
+  ...bindActionCreators({ getNews }, dispatch),
   dispatch,
 }))(Home);
