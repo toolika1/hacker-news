@@ -21,6 +21,9 @@ export const reducer = (state = initialState, action) => {
         news: [...state.news, ...action.json],
       };
 
+    case types.NEWS_SELECTED:
+      return { ...state, selectedNewsId: action.newsId };
+
     default:
       return state;
   }

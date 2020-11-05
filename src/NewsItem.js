@@ -33,7 +33,15 @@ export default function NewsItem(props) {
             />
           </List.Item>
           <img alt={props.data.title} src={props.data.urlToImage} />
-          <div className="title">{props.data.title}</div>
+          <div className="title">
+            <a
+              href={`/app?key=${props.data.key}&q=${props.data.q}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {props.data.title}
+            </a>
+          </div>
           <div className="center justified horizontal layout footer ant-list-item-meta-description">
             <div>
               <Button

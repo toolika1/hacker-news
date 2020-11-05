@@ -17,7 +17,7 @@ import createStore from "../src/modules/store";
 global["localStorage"] = localStorage;
 global["window"] = require("global/window");
 
-const API_KEY = "df1ec0d58213465cb8a82f5a683e151f";
+const API_KEY = "c940e2a59bf74368b64219bcaf870342";
 const app = express();
 
 app.use(bodyParser.json());

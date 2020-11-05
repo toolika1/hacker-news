@@ -1,0 +1,44 @@
+.news-details {
+  margin: 0 auto;
+  max-width: 680px;
+  padding: 64px;
+}
+
+@media screen and (max-width: 480px) {
+  .news-details {
+    padding: 32px;
+  }
+  .news-related {
+    margin: 0 -32px;
+  }
+}
+
+.news-details .main-title {
+  font-size: xx-large;
+  font-weight: bold;
+  line-height: 1.3em;
+}
+
+.news-details .description {
+  margin: 8px 0;
+}
+
+.news-details .ant-list-item-meta-title {
+  margin: 0;
+}
+
+.news-details img {
+  width: 100%;
+}
+
+.news-details .content {
+  margin: 16px 0;
+}
+
+.news-details .actions {
+  margin: 32px 0;
+}
+
+.news-related {
+  background-color: #fafafa;
+}

@@ -12,9 +12,9 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Button, Input, Layout, List, Menu, Spin, Tooltip } from "antd";
 import { find } from "lodash";
-import Masonry from "react-masonry-css";
 import queryString from "query-string";
 import React from "react";
+import Masonry from "react-masonry-css";
 import { connect } from "react-redux";
 // import { withRouter } from "react-router-dom";
 import { bindActionCreators } from "redux";
@@ -75,7 +75,7 @@ class Home extends React.Component {
       });
     } else {
       this.setState({ q: queryParams.q });
-      this.props.getNews(this.state.q);
+      this.props.getNews(queryParams.q);
     }
   }
 
@@ -87,7 +87,7 @@ class Home extends React.Component {
 
     if (queryParams.q !== nextQueryParams.q) {
       this.setState({ q: nextQueryParams.q });
-      this.props.getNews(this.state.q);
+      this.props.getNews(nextQueryParams.q);
     }
   }
 
@@ -97,7 +97,7 @@ class Home extends React.Component {
 
   onSelectMenuCategory = (selection) => {
     this.props.clearNews();
-    this.setState({ collapsed: true });
+    this.setState({ collapsed: true, page: 1 });
 
     const queryParams = queryString.parse(this.props.location.search);
 
@@ -115,7 +115,7 @@ class Home extends React.Component {
   };
 
   render() {
-    console.log("this.props", this.props);
+    // console.log("this.props", this.props);
 
     return (
       <Layout className="layout" hasSider={true}>
@@ -248,7 +248,10 @@ class Home extends React.Component {
                   columnClassName="my-masonry-grid-column"
                 >
                   {this.props.news.map((newsItem, key) => (
-                    <NewsItem data={{ ...newsItem }} key={key} />
+                    <NewsItem
+                      data={{ ...newsItem, key: key % 20, q: this.state.q }}
+                      key={key}
+                    />
                   ))}
                 </Masonry>
 
